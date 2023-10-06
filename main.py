@@ -1,7 +1,7 @@
 from tkinter import Tk, BOTH, Canvas
 
 class Window:
-    def __init__(self, height, width):
+    def __init__(self, height, width) -> None:
         self.__root = Tk()
         self.__root.title = "Maze Solver"
         self.canvas = Canvas(self.__root, height=height, width=width)
@@ -25,12 +25,12 @@ class Window:
         self.is_running = False
 
 class Point:
-    def __init__(self, x, y):
+    def __init__(self, x, y) -> None:
         self.x = x
         self.y = y
 
 class Line:
-    def __init__(self, point1, point2):
+    def __init__(self, point1, point2) -> None:
         self.x1 = point1.x
         self.y1 = point1.y
         self.x2 = point2.x
@@ -39,6 +39,10 @@ class Line:
     def draw(self, canvas, fill_color):
         canvas.create_line(self.x1,self.y1,self.x2,self.y2, fill=fill_color, width=2)
         canvas.pack()
+
+class Cell:
+    def __init__(self) -> None:
+        pass
 
 def main():
     win = Window(800,600)
