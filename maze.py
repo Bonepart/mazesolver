@@ -3,7 +3,7 @@ import time
 import random
 
 class Maze:
-    def __init__(self, x1,y1,num_rows,num_cols,cell_size_x,cell_size_y,win=None,seed=None) -> None:
+    def __init__(self, x1,y1,num_rows,num_cols,cell_size_x,cell_size_y,win,seed=None) -> None:
         self.x1 = x1
         self.y1 = y1
         self.num_rows = num_rows
@@ -25,10 +25,9 @@ class Maze:
             for j in range(0, self.num_rows):
                 new_col.append(Cell(self.win))
             self._cells.append(new_col)
-        if self.win is not None:
-            for i in range(0, len(self._cells)):
-                for j in range(0, len(self._cells[i])):
-                    self.__draw_cell(i, j)
+        for i in range(0, len(self._cells)):
+            for j in range(0, len(self._cells[i])):
+                self.__draw_cell(i, j)
 
     def __draw_cell(self, i, j):
         x1 = self.x1 + i * self.cell_size_x
