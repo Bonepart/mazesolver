@@ -1,4 +1,5 @@
 from cell import Cell
+from graphics import Line
 import time
 import random
 
@@ -15,11 +16,12 @@ class Maze:
             random.seed(seed)
         else:
             random.seed(0)
-        self.__create_cells()
+        self._draw_borders()
+        self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0 , 0)
 
-    def __create_cells(self):
+    def _create_cells(self):
         self._cells = []
         for i in range(0, self.num_cols):
             new_col = []
@@ -38,6 +40,19 @@ class Maze:
         self._cells[i][j].draw(x1, y1, x2, y2)
         self.__animate()
 
+    def _draw_borders(self):
+        x2 = self.x1 + self.num_cols * self.cell_size_x
+        y2 = self.y1 + self.num_rows * self.cell_size_y
+        top_border = Line(self.x1 - 1, self.y1, x2 + 1, self.y1)
+        bottom_border = Line(self.x1 - 1, y2, x2 + 1, y2)
+        left_border = Line(self.x1, self.y1, self.x1, y2)
+        right_border = Line(x2, self.y1, x2, y2)
+
+        self.win.draw_line(top_border, self.win.draw_color)
+        self.win.draw_line(bottom_border, self.win.draw_color)
+        self.win.draw_line(left_border, self.win.draw_color)
+        self.win.draw_line(right_border, self.win.draw_color)
+
     def __animate(self):
         self.win.redraw()
         time.sleep(0.05)
@@ -52,7 +67,7 @@ class Maze:
         self.__draw_cell(i,j)
 
     def _break_walls_r(self, i, j):
-        print(f"_break_walls_r: {i}, {j}")
+        #print(f"_break_walls_r: {i}, {j}")
         self._cells[i][j].visited = True
         while True:
             to_visit = [("up", [i, j - 1]), ("right", [i + 1, j]), ("down", [i, j + 1]), ("left", [i - 1, j])]
@@ -64,14 +79,15 @@ class Maze:
                     if not self._cells[cell[1][0]][cell[1][1]].visited:
                         possible_direction.append(cell)
                 except IndexError:
-                    print(f"IndexError at {cell[0]} - {cell[1][0]}, {cell[1][1]}")
+                    #print(f"IndexError at {cell[0]} - {cell[1][0]}, {cell[1][1]}")
+                    pass
             if len(possible_direction) == 0:
                 return
             direction = random.randint(0, len(possible_direction) - 1)
             vI = possible_direction[direction][1][0]
             vJ = possible_direction[direction][1][1]
             cell_to_visit = self._cells[vI][vJ]
-            print(f"direction: {possible_direction[direction][0]}")
+            #print(f"direction: {possible_direction[direction][0]}")
             match possible_direction[direction][0]:
                 case "up":
                     self._cells[i][j].has_top_wall = False
