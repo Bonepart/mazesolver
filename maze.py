@@ -12,11 +12,12 @@ class Maze:
         self.cell_size_y = cell_size_y
         self.win = win
         if seed is not None:
-            self.seed = random.seed(seed)
+            random.seed(seed)
         else:
-            self.seed = 0
+            random.seed(0)
         self.__create_cells()
         self._break_entrance_and_exit()
+        self._break_walls_r(0 , 0)
 
     def __create_cells(self):
         self._cells = []
@@ -51,4 +52,43 @@ class Maze:
         self.__draw_cell(i,j)
 
     def _break_walls_r(self, i, j):
-        pass
+        print(f"_break_walls_r: {i}, {j}")
+        self._cells[i][j].visited = True
+        while True:
+            to_visit = [("up", [i, j - 1]), ("right", [i + 1, j]), ("down", [i, j + 1]), ("left", [i - 1, j])]
+            possible_direction = []
+            for cell in to_visit:
+                try:
+                    if cell[1][0] < 0 or cell[1][1] < 0:
+                        raise IndexError
+                    if not self._cells[cell[1][0]][cell[1][1]].visited:
+                        possible_direction.append(cell)
+                except IndexError:
+                    print(f"IndexError at {cell[0]} - {cell[1][0]}, {cell[1][1]}")
+            if len(possible_direction) == 0:
+                return
+            direction = random.randint(0, len(possible_direction) - 1)
+            vI = possible_direction[direction][1][0]
+            vJ = possible_direction[direction][1][1]
+            cell_to_visit = self._cells[vI][vJ]
+            print(f"direction: {possible_direction[direction][0]}")
+            match possible_direction[direction][0]:
+                case "up":
+                    self._cells[i][j].has_top_wall = False
+                    cell_to_visit.has_bottom_wall = False
+                case "right":
+                    self._cells[i][j].has_right_wall = False
+                    cell_to_visit.has_left_wall = False
+                case "down":
+                    self._cells[i][j].has_bottom_wall = False
+                    cell_to_visit.has_top_wall = False
+                case "left":
+                    self._cells[i][j].has_left_wall = False
+                    cell_to_visit.has_right_wall = False
+            self._cells[i][j].draw()
+            self.__animate()
+            cell_to_visit.draw()
+            self.__animate()
+            self._break_walls_r(vI, vJ)
+
+
