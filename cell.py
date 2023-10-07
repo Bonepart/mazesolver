@@ -12,26 +12,45 @@ class Cell:
         self.y2 = 0
         self.__win = window
 
-    def draw(self, x1, y1, x2, y2):
-        point1 = Point(x1, y1)
-        point2 = Point(x2, y2)
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
+    def draw(self, x1=None, y1=None, x2=None, y2=None):
+        if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+            self.x1 = x1
+            self.y1 = y1
+            self.x2 = x2
+            self.y2 = y2
+        if self.x1 is None or self.y1 is None or self.x2 is None or self.y2 is None:
+            raise Exception("Do not have coordinates for Cell Location")
+        point1 = Point(self.x1, self.y1)
+        point2 = Point(self.x2, self.y2)
+        fill_color = None
 
         if self.has_left_wall:
-            left_wall = Line(point1, Point(point1.x, point2.y))
-            self.__win.draw_line(left_wall, "black")
+            fill_color = "black"
+        else:
+            fill_color = "white"
+        left_wall = Line(point1, Point(point1.x, point2.y))
+        self.__win.draw_line(left_wall, fill_color)
+
         if self.has_right_wall:
-            right_wall = Line(Point(point2.x, point1.y), point2)
-            self.__win.draw_line(right_wall, "black")
+            fill_color = "black"
+        else:
+            fill_color = "white"
+        right_wall = Line(Point(point2.x, point1.y), point2)
+        self.__win.draw_line(right_wall, fill_color)
+
         if self.has_top_wall:
-            top_wall = Line(point1, Point(point2.x, point1.y))
-            self.__win.draw_line(top_wall, "black")
+            fill_color = "black"
+        else:
+            fill_color = "white"
+        top_wall = Line(point1, Point(point2.x, point1.y))
+        self.__win.draw_line(top_wall, fill_color)
+
         if self.has_bottom_wall:
-            bottom_wall = Line(Point(point1.x, point2.y), point2)
-            self.__win.draw_line(bottom_wall, "black")
+            fill_color = "black"
+        else:
+            fill_color = "white"
+        bottom_wall = Line(Point(point1.x, point2.y), point2)
+        self.__win.draw_line(bottom_wall, fill_color)
 
     def draw_move(self, to_cell, undo=False):
         if undo:

@@ -7,8 +7,8 @@ def main():
 
     #test code
     num_cols = 6
-    num_rows = 12
-    m1 = Maze(10, 10, num_rows, num_cols, 10, 10, win)
+    num_rows = 6
+    m1 = Maze(10, 10, num_rows, num_cols, 40, 40, win)
 
     win.wait_for_close()
 
