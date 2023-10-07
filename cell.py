@@ -6,6 +6,7 @@ class Cell:
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
+        self.visited = False
         self.x1 = 0
         self.y1 = 0
         self.x2 = 0
