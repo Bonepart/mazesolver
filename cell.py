@@ -60,6 +60,4 @@ class Cell:
         x2 = (to_cell.x2 - to_cell.x1) // 2 + to_cell.x1
         y2 = (to_cell.y2 - to_cell.y1) // 2 + to_cell.y1
         line = Line(x1, y1, x2, y2)
-        #print(f"x1: {line.x1} y1: {line.y1}")
-        #print(f"x2: {line.x2} y2: {line.y2}")
         self.__win.draw_line(line, fill_color)
