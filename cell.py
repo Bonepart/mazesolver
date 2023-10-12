@@ -52,9 +52,9 @@ class Cell:
 
     def draw_move(self, to_cell, undo=False):
         if undo:
-            fill_color = "gray"
+            fill_color = self.__win.undo_color
         else:
-            fill_color = "blue"
+            fill_color = self.__win.move_color
         x1 = (self.x2 - self.x1) // 2 + self.x1
         y1 = (self.y2 - self.y1) // 2 + self.y1
         x2 = (to_cell.x2 - to_cell.x1) // 2 + to_cell.x1
