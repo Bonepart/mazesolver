@@ -51,6 +51,22 @@ class Maze:
         self.win.draw_line(left_border, self.win.draw_color)
         self.win.draw_line(right_border, self.win.draw_color)
 
+    def _draw_first_move(self):
+        first_cell = self._cells[0][0]
+        x1 = (first_cell.x2 - first_cell.x1) // 2 + first_cell.x1
+        y2 = (first_cell.y2 - first_cell.y1) // 2 + first_cell.y1
+        self.__animate()
+        first_move = Line(x1, 0, x1, y2)
+        self.win.draw_line(first_move, self.win.move_color)
+
+    def _draw_last_move(self):
+        last_cell = self._cells[self.num_cols - 1][self.num_rows - 1]
+        x1 = (last_cell.x2 - last_cell.x1) // 2 + last_cell.x1
+        y1 = (last_cell.y2 - last_cell.y1) // 2 + last_cell.y1
+        self.__animate()
+        last_move = Line(x1, y1, x1, last_cell.y2 + 10)
+        self.win.draw_line(last_move, self.win.move_color)
+
     def __animate(self):
         self.win.redraw()
         time.sleep(0.05)
@@ -65,7 +81,6 @@ class Maze:
         self.__draw_cell(i,j)
 
     def _break_walls_r(self, i, j):
-        #print(f"_break_walls_r: {i}, {j}")
         self._cells[i][j].visited = True
         while True:
             to_visit = [("up", [i, j - 1]), ("right", [i + 1, j]), ("down", [i, j + 1]), ("left", [i - 1, j])]
@@ -77,7 +92,6 @@ class Maze:
                     if not self._cells[cell[1][0]][cell[1][1]].visited:
                         possible_direction.append(cell)
                 except IndexError:
-                    #print(f"IndexError at {cell[0]} - {cell[1][0]}, {cell[1][1]}")
                     pass
             if len(possible_direction) == 0:
                 return
@@ -85,7 +99,6 @@ class Maze:
             vI = possible_direction[direction][1][0]
             vJ = possible_direction[direction][1][1]
             cell_to_visit = self._cells[vI][vJ]
-            #print(f"direction: {possible_direction[direction][0]}")
             match possible_direction[direction][0]:
                 case "up":
                     self._cells[i][j].has_top_wall = False
@@ -111,47 +124,43 @@ class Maze:
                 self._cells[i][j].visited = False
 
     def solve(self):
-        #print(f"calling _solve_r(0, 0)")
-        return self._solve_r(0, 0)
+        self._draw_first_move()
+        if self._solve_r(0, 0):
+            self._draw_last_move()
+            return True
+        else:
+            return False
 
     def _solve_r(self, i, j):
-        #print(f"entered _solve_r({i}, {j})")
         self.__animate()
         self._cells[i][j].visited = True
         eI = len(self._cells) - 1
         eJ = len(self._cells[eI]) - 1
-        #print(f"eI = {eI}")
-        #print(f"eJ = {eJ}")
         if i == eI and j == eJ:
             return True
         
+        #Check for possible move to the right or down first
         to_visit = [("right", [i + 1, j]), ("down", [i, j + 1]), ("left", [i - 1, j]), ("up", [i, j - 1])]
         possible_direction = []
         for cell in to_visit:
             try:
                 if cell[1][0] < 0 or cell[1][1] < 0:
                     raise IndexError(f"IndexError on {cell[0]}, {cell[1]}")
-                #print(f"{cell[0]}, {cell[1]} visited = {self._cells[cell[1][0]][cell[1][1]].visited}")
                 if not self._cells[cell[1][0]][cell[1][1]].visited:
                     possible_direction.append(cell)
             except IndexError as e:
                 pass
-
-        #print(f"length of PD = {len(possible_direction)}")
         if len(possible_direction) == 0:
             return False
 
         while len(possible_direction) > 0:
-            #print(f"while loop: length = {len(possible_direction)}")
             vI = possible_direction[0][1][0]
             vJ = possible_direction[0][1][1]
             cell_to_visit = self._cells[vI][vJ]
             match possible_direction[0][0]:
                 case "up":
                     if not self._cells[i][j].has_top_wall and not cell_to_visit.has_bottom_wall:
-                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
-                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
@@ -159,9 +168,7 @@ class Maze:
                     possible_direction.pop(0)
                 case "right":
                     if not self._cells[i][j].has_right_wall and not cell_to_visit.has_left_wall:
-                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
-                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
@@ -169,9 +176,7 @@ class Maze:
                     possible_direction.pop(0)
                 case "down":
                     if not self._cells[i][j].has_bottom_wall and not cell_to_visit.has_top_wall:
-                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
-                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
