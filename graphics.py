@@ -6,6 +6,8 @@ class Window:
         self.__root.title("Maze Solver")
         self.draw_color = "black"
         self.background_color = "white"
+        self.move_color = "blue"
+        self.undo_color = "grey"
         self.canvas = Canvas(self.__root, height=height, width=width, background=self.background_color)
         self.canvas.pack()
         self.is_running = False
