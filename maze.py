@@ -116,4 +116,61 @@ class Maze:
         self._solve_r(0, 0)
 
     def _solve_r(self, i, j):
+        self.__animate()
+        self._cells[i][j].visited = True
+        eI = len(self._cells) - 1
+        eJ = len(self._cells[eI]) - 1
+
+        if i == eI and j == eJ:
+            return True
         
+        to_visit = [("right", [i + 1, j]), ("down", [i, j + 1]), ("left", [i - 1, j]), ("up", [i, j - 1])]
+        possible_direction = []
+        for cell in to_visit:
+            try:
+                if cell[1][0] < 0 or cell[1][1] < 0:
+                    raise IndexError
+                if not self._cells[cell[1][0]][cell[1][1]].visited:
+                    possible_direction.append(cell)
+            except IndexError:
+                pass
+        if len(possible_direction) == 0:
+            return False
+        
+        while len(possible_direction) > 0:
+            vI = possible_direction[0][1][0]
+            vJ = possible_direction[0][1][1]
+            cell_to_visit = self._cells[vI][vJ]
+            match possible_direction[0][0]:
+                case "up":
+                    if not self._cells[i][j].has_top_wall and not cell_to_visit.has_bottom_wall:
+                        self._cells[i][j].draw_move(cell_to_visit)
+                        if self._solve_r(vI, vJ):
+                            return True
+                        else:
+                            self._cells[i][j].draw_move(cell_to_visit, True)
+                            possible_direction.pop(0)
+                case "right":
+                    if not self._cells[i][j].has_right_wall and not cell_to_visit.has_left_wall:
+                        self._cells[i][j].draw_move(cell_to_visit)
+                        if self._solve_r(vI, vJ):
+                            return True
+                        else:
+                            self._cells[i][j].draw_move(cell_to_visit, True)
+                            possible_direction.pop(0)
+                case "down":
+                    if not self._cells[i][j].has_bottom_wall and not cell_to_visit.has_top_wall:
+                        self._cells[i][j].draw_move(cell_to_visit)
+                        if self._solve_r(vI, vJ):
+                            return True
+                        else:
+                            self._cells[i][j].draw_move(cell_to_visit, True)
+                            possible_direction.pop(0)
+                case "left":
+                    if not self._cells[i][j].has_left_wall and not cell_to_visit.has_right_wall:
+                        self._cells[i][j].draw_move(cell_to_visit)
+                        if self._solve_r(vI, vJ):
+                            return True
+                        else:
+                            self._cells[i][j].draw_move(cell_to_visit, True)
+                            possible_direction.pop(0)
