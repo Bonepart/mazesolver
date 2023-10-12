@@ -12,14 +12,12 @@ class Maze:
         self.cell_size_x = cell_size_x
         self.cell_size_y = cell_size_y
         self.win = win
-        if seed is not None:
-            random.seed(seed)
-        else:
-            random.seed(0)
+        random.seed(seed)
         self._draw_borders()
         self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0 , 0)
+        self._reset_cells_visited()
 
     def _create_cells(self):
         self._cells = []
@@ -113,14 +111,17 @@ class Maze:
                 self._cells[i][j].visited = False
 
     def solve(self):
-        self._solve_r(0, 0)
+        #print(f"calling _solve_r(0, 0)")
+        return self._solve_r(0, 0)
 
     def _solve_r(self, i, j):
+        #print(f"entered _solve_r({i}, {j})")
         self.__animate()
         self._cells[i][j].visited = True
         eI = len(self._cells) - 1
         eJ = len(self._cells[eI]) - 1
-
+        #print(f"eI = {eI}")
+        #print(f"eJ = {eJ}")
         if i == eI and j == eJ:
             return True
         
@@ -129,48 +130,60 @@ class Maze:
         for cell in to_visit:
             try:
                 if cell[1][0] < 0 or cell[1][1] < 0:
-                    raise IndexError
+                    raise IndexError(f"IndexError on {cell[0]}, {cell[1]}")
+                #print(f"{cell[0]}, {cell[1]} visited = {self._cells[cell[1][0]][cell[1][1]].visited}")
                 if not self._cells[cell[1][0]][cell[1][1]].visited:
                     possible_direction.append(cell)
-            except IndexError:
+            except IndexError as e:
                 pass
+
+        #print(f"length of PD = {len(possible_direction)}")
         if len(possible_direction) == 0:
             return False
-        
+
         while len(possible_direction) > 0:
+            #print(f"while loop: length = {len(possible_direction)}")
             vI = possible_direction[0][1][0]
             vJ = possible_direction[0][1][1]
             cell_to_visit = self._cells[vI][vJ]
             match possible_direction[0][0]:
                 case "up":
                     if not self._cells[i][j].has_top_wall and not cell_to_visit.has_bottom_wall:
+                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
+                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
                             self._cells[i][j].draw_move(cell_to_visit, True)
-                            possible_direction.pop(0)
+                    possible_direction.pop(0)
                 case "right":
                     if not self._cells[i][j].has_right_wall and not cell_to_visit.has_left_wall:
+                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
+                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
                             self._cells[i][j].draw_move(cell_to_visit, True)
-                            possible_direction.pop(0)
+                    possible_direction.pop(0)
                 case "down":
                     if not self._cells[i][j].has_bottom_wall and not cell_to_visit.has_top_wall:
+                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
+                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
                             self._cells[i][j].draw_move(cell_to_visit, True)
-                            possible_direction.pop(0)
+                    possible_direction.pop(0)
                 case "left":
                     if not self._cells[i][j].has_left_wall and not cell_to_visit.has_right_wall:
+                        #print(f"calling draw_move({vI}, {vJ})")
                         self._cells[i][j].draw_move(cell_to_visit)
+                        #print(f"calling _solve_r({vI}, {vJ})")
                         if self._solve_r(vI, vJ):
                             return True
                         else:
                             self._cells[i][j].draw_move(cell_to_visit, True)
-                            possible_direction.pop(0)
+                    possible_direction.pop(0)

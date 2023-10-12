@@ -54,7 +54,7 @@ class Cell:
         if undo:
             fill_color = "gray"
         else:
-            fill_color = "red"
+            fill_color = "blue"
         x1 = (self.x2 - self.x1) // 2 + self.x1
         y1 = (self.y2 - self.y1) // 2 + self.y1
         x2 = (to_cell.x2 - to_cell.x1) // 2 + to_cell.x1
